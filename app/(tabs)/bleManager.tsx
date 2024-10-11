@@ -1,5 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,11 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Colors } from '~/src/Utils/Colors';
-import useBluetooth from '~/src/hooks/useBluetooth';
+import { Colors } from "@/src/Utils/Colors";
+import useBluetooth from "@/src/hooks/useBluetooth";
 
 export default function TwoScreen() {
   const {
@@ -31,9 +31,9 @@ export default function TwoScreen() {
   const [readData, setReadData] = useState<number[] | null>(null);
   const [isNotifying, setIsNotifying] = useState(false);
 
-  const serviceUUID = '01000100-0000-1000-8000-009078563412';
-  const readCharacteristicUUID = '02000200-0000-1000-8000-009178563412';
-  const writeCharacteristicUUID = '03000300-0000-1000-8000-009278563412';
+  const serviceUUID = "01000100-0000-1000-8000-009078563412";
+  const readCharacteristicUUID = "02000200-0000-1000-8000-009178563412";
+  const writeCharacteristicUUID = "03000300-0000-1000-8000-009278563412";
 
   useEffect(() => {
     return () => {
@@ -45,23 +45,23 @@ export default function TwoScreen() {
 
   const handleWrite = async () => {
     try {
-      const data = 'Hello, OnePlus Bullets!';
+      const data = "Hello, OnePlus Bullets!";
       await writeToDevice(serviceUUID, writeCharacteristicUUID, data);
-      Alert.alert('Success', 'Data written successfully');
+      Alert.alert("Success", "Data written successfully");
     } catch (error) {
-      Alert.alert('Error', `Failed to write data: ${error.message}`);
+      Alert.alert("Error", `Failed to write data: ${error.message}`);
     }
   };
 
   const handleRead = async () => {
-    const serviceUUID = '01000100-0000-1000-8000-009078563412';
-    const characteristicUUID = '02000200-0000-1000-8000-009178563412';
+    const serviceUUID = "01000100-0000-1000-8000-009078563412";
+    const characteristicUUID = "02000200-0000-1000-8000-009178563412";
 
     const data = await readFromDevice(serviceUUID, characteristicUUID);
     if (data) {
-      console.log('Read data:', data);
+      console.log("Read data:", data);
     } else {
-      console.error('Failed to read characteristic');
+      console.error("Failed to read characteristic");
     }
   };
 
@@ -71,13 +71,20 @@ export default function TwoScreen() {
         await stopNotifications(serviceUUID, readCharacteristicUUID);
         setIsNotifying(false);
       } else {
-        await startNotifications(serviceUUID, readCharacteristicUUID, (data) => {
-          setReadData(data);
-        });
+        await startNotifications(
+          serviceUUID,
+          readCharacteristicUUID,
+          (data) => {
+            setReadData(data);
+          }
+        );
         setIsNotifying(true);
       }
     } catch (error) {
-      Alert.alert('Notification Error', `Failed to toggle notifications: ${error.message}`);
+      Alert.alert(
+        "Notification Error",
+        `Failed to toggle notifications: ${error.message}`
+      );
     }
   };
 
@@ -88,21 +95,31 @@ export default function TwoScreen() {
       <TouchableOpacity
         style={[styles.scanButton, isScanning && styles.scanningButton]}
         onPress={startScan}
-        disabled={isScanning}>
+        disabled={isScanning}
+      >
         {isScanning ? (
           <ActivityIndicator color={Colors.white} />
         ) : (
           <Ionicons name="bluetooth" size={24} color={Colors.white} />
         )}
-        <Text style={styles.scanButtonText}>{isScanning ? 'Scanning...' : 'Scan for Devices'}</Text>
+        <Text style={styles.scanButtonText}>
+          {isScanning ? "Scanning..." : "Scan for Devices"}
+        </Text>
       </TouchableOpacity>
 
       <FlatList
         data={devices}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.deviceItem} onPress={() => connectToDevice(item.id)}>
-            <Ionicons name="phone-portrait-outline" size={24} color={Colors.text} />
+          <TouchableOpacity
+            style={styles.deviceItem}
+            onPress={() => connectToDevice(item.id)}
+          >
+            <Ionicons
+              name="phone-portrait-outline"
+              size={24}
+              color={Colors.text}
+            />
             <View style={styles.deviceInfo}>
               <Text style={styles.deviceName}>{item.name}</Text>
               <Text style={styles.deviceId}>{item.id}</Text>
@@ -110,7 +127,9 @@ export default function TwoScreen() {
             <Ionicons name="chevron-forward" size={24} color={Colors.text} />
           </TouchableOpacity>
         )}
-        ListEmptyComponent={() => <Text style={styles.emptyListText}>No devices found</Text>}
+        ListEmptyComponent={() => (
+          <Text style={styles.emptyListText}>No devices found</Text>
+        )}
       />
 
       {connectedDevice && (
@@ -121,8 +140,15 @@ export default function TwoScreen() {
           <Text style={styles.rssi}>RSSI: {connectedDevice.rssi}</Text>
 
           <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.actionButton} onPress={disconnectFromDevice}>
-              <Ionicons name="close-circle-outline" size={24} color={Colors.white} />
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={disconnectFromDevice}
+            >
+              <Ionicons
+                name="close-circle-outline"
+                size={24}
+                color={Colors.white}
+              />
               <Text style={styles.actionButtonText}>Disconnect</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton} onPress={handleWrite}>
@@ -133,14 +159,21 @@ export default function TwoScreen() {
               <Ionicons name="reader-outline" size={24} color={Colors.white} />
               <Text style={styles.actionButtonText}>Read Data</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={toggleNotifications}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={toggleNotifications}
+            >
               <Ionicons
-                name={isNotifying ? 'notifications-off-outline' : 'notifications-outline'}
+                name={
+                  isNotifying
+                    ? "notifications-off-outline"
+                    : "notifications-outline"
+                }
                 size={24}
                 color={Colors.white}
               />
               <Text style={styles.actionButtonText}>
-                {isNotifying ? 'Stop Notify' : 'Start Notify'}
+                {isNotifying ? "Stop Notify" : "Start Notify"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -169,14 +202,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
     color: Colors.text,
   },
   scanButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 8,
@@ -188,12 +221,12 @@ const styles = StyleSheet.create({
   scanButtonText: {
     color: Colors.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 8,
   },
   deviceItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     backgroundColor: Colors.backgroundLight,
     borderRadius: 8,
@@ -210,7 +243,7 @@ const styles = StyleSheet.create({
   },
   deviceName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.text,
   },
   deviceId: {
@@ -219,7 +252,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   emptyListText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 24,
     fontSize: 16,
     color: Colors.textLight,
@@ -237,7 +270,7 @@ const styles = StyleSheet.create({
   },
   connectedTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
     color: Colors.text,
   },
@@ -252,14 +285,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 16,
   },
   actionButton: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.primary,
     padding: 12,
     borderRadius: 8,
@@ -269,9 +302,9 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: Colors.white,
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 4,
-    textAlign: 'center',
+    textAlign: "center",
   },
   readDataContainer: {
     marginTop: 16,
@@ -281,7 +314,7 @@ const styles = StyleSheet.create({
   },
   readDataTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
     color: Colors.text,
   },

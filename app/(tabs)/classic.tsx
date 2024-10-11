@@ -1,6 +1,6 @@
-import { Entypo, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
 import {
   View,
   Text,
@@ -8,12 +8,12 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
-} from 'react-native';
-import { BluetoothDevice } from 'react-native-bluetooth-classic';
+} from "react-native";
+import { BluetoothDevice } from "react-native-bluetooth-classic";
 
-import Colors from '../../src/Utils/Colors';
+import Colors from "../../src/Utils/Colors";
 
-import useBluetoothClassic from '~/src/hooks/useBluetoothClassic';
+import useBluetoothClassic from "@/src/hooks/useBluetoothClassic";
 
 const BluetoothClassic = () => {
   const {
@@ -28,13 +28,13 @@ const BluetoothClassic = () => {
   const router = useRouter();
 
   const navigateToDetails = () => {
-    router.navigate('/deviceDetails');
+    router.navigate("/deviceDetails");
   };
 
   const handleConnectDevice = async (device: BluetoothDevice) => {
     const connected = await connectToDevice(device);
     if (connected) {
-      router.navigate('/deviceDetails');
+      router.navigate("/deviceDetails");
     }
   };
 
@@ -44,21 +44,36 @@ const BluetoothClassic = () => {
       <View style={styles.deviceItem}>
         <TouchableOpacity
           style={styles.deviceInfo}
-          onPress={() => (isConnected ? disconnectFromDevice() : handleConnectDevice(item))}>
-          <Text style={styles.deviceName}>{item.name || 'Unknown Device'}</Text>
+          onPress={() =>
+            isConnected ? disconnectFromDevice() : handleConnectDevice(item)
+          }
+        >
+          <Text style={styles.deviceName}>{item.name || "Unknown Device"}</Text>
           <Text style={styles.deviceId}>{item.address}</Text>
         </TouchableOpacity>
         {isConnected && (
           <View style={styles.itemActionButtonsContainer}>
-            <TouchableOpacity style={styles.disconnectButton} onPress={navigateToDetails}>
+            <TouchableOpacity
+              style={styles.disconnectButton}
+              onPress={navigateToDetails}
+            >
               <Entypo name="eye" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.disconnectButton} onPress={disconnectFromDevice}>
-              <MaterialCommunityIcons name="bluetooth-off" size={24} color="white" />
+            <TouchableOpacity
+              style={styles.disconnectButton}
+              onPress={disconnectFromDevice}
+            >
+              <MaterialCommunityIcons
+                name="bluetooth-off"
+                size={24}
+                color="white"
+              />
             </TouchableOpacity>
           </View>
         )}
-        {isConnected && connecting && <ActivityIndicator color={Colors.white} />}
+        {isConnected && connecting && (
+          <ActivityIndicator color={Colors.white} />
+        )}
       </View>
     );
   };
@@ -70,13 +85,16 @@ const BluetoothClassic = () => {
       <TouchableOpacity
         style={[styles.button, isScanning && styles.buttonDisabled]}
         onPress={startScan}
-        disabled={isScanning}>
+        disabled={isScanning}
+      >
         {isScanning ? (
           <ActivityIndicator color={Colors.white} />
         ) : (
           <Ionicons name="bluetooth" size={24} color={Colors.white} />
         )}
-        <Text style={styles.buttonText}>{isScanning ? 'Scanning...' : 'Scan for Devices'}</Text>
+        <Text style={styles.buttonText}>
+          {isScanning ? "Scanning..." : "Scan for Devices"}
+        </Text>
       </TouchableOpacity>
 
       <FlatList
@@ -86,7 +104,7 @@ const BluetoothClassic = () => {
         style={styles.deviceList}
         ListEmptyComponent={
           <Text style={styles.emptyListText}>
-            {isScanning ? 'Scanning for devices...' : 'No devices found'}
+            {isScanning ? "Scanning for devices..." : "No devices found"}
           </Text>
         }
       />
@@ -102,7 +120,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.primary,
     marginBottom: 20,
   },
@@ -110,10 +128,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 10,
   },
   buttonDisabled: {
@@ -122,7 +140,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Colors.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   deviceList: {
     flex: 1,
@@ -132,16 +150,16 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   deviceInfo: {
     flex: 1,
   },
   deviceName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.white,
   },
   deviceId: {
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
     color: Colors.textLight,
   },
   emptyListText: {
-    textAlign: 'center',
+    textAlign: "center",
     color: Colors.textLight,
     fontSize: 16,
   },
@@ -162,11 +180,11 @@ const styles = StyleSheet.create({
   connectedDeviceText: {
     color: Colors.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   messageContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 10,
   },
   input: {
@@ -181,7 +199,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 5,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   disconnectButton: {
     backgroundColor: Colors.danger,
@@ -191,7 +209,7 @@ const styles = StyleSheet.create({
   receivedDataTitle: {
     color: Colors.white,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 10,
     marginBottom: 5,
   },
@@ -205,8 +223,8 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
   actionButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
   },
   actionButton: {
@@ -218,7 +236,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     color: Colors.white,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 12,
   },
   feedbackContainer: {
@@ -232,8 +250,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   itemActionButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     gap: 10,
   },
 });

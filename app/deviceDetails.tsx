@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 
 
 import Colors from '../src/Utils/Colors';
 
-import useBluetoothClassic from '~/src/hooks/useBluetoothClassic';
+import useBluetoothClassic from '@/src/hooks/useBluetoothClassic';
 
 const DeviceDetails = () => {
   const router = useRouter();

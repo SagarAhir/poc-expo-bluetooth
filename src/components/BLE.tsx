@@ -92,8 +92,6 @@ export default BLE;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.secondary,
   },
   heartRateTitleWrapper: {
     flex: 1,

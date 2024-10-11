@@ -1,14 +1,14 @@
 {
   "expo": {
     "name": "poc-bluetooth-expo",
-    "slug": "bluetooth-poc",
+    "slug": "poc-expo-bluetooth",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,15 +17,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sagarahir.pocbluetoothexpo"
+      "package": "com.sagarahir.pocbluetoothexpo",
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_CONNECT"
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
@@ -36,7 +41,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "785fac5a-dd89-45b5-afa4-f6c0322e0b40"
+        "projectId": "d924c969-e0b3-4167-9d5e-c678d922843e"
       }
     },
     "owner": "sagarahir"

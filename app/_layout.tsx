@@ -1,11 +1,25 @@
 import { Stack } from "expo-router";
-import "react-native-reanimated";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import Colors from "@/src/Utils/Colors";
 
 export default function RootLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
+        <View style={{ flex: 1, backgroundColor: Colors.background }}>
+          <StatusBar style="light" />
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="deviceDetails"
+              options={{ headerShown: false }}
+            />
+          </Stack>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

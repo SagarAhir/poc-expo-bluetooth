@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from "react-native";
 
-import { Colors } from '~/src/Utils/Colors';
-import BLE from '~/src/components/BLE';
+import { Colors } from "@/src/Utils/Colors";
+import BLE from "@/src/components/BLE";
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.white,
   },
 });
