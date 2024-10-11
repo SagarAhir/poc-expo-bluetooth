@@ -51,7 +51,6 @@ const useBluetoothClassic = () => {
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
-      await initializeBluetooth();
       if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -64,6 +63,7 @@ const useBluetoothClassic = () => {
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } else {
         const isAndroid31PermissionsGranted = await requestAndroid31Permissions();
+        await initializeBluetooth();
         console.log('isAndroid31PermissionsGranted', isAndroid31PermissionsGranted);
         return isAndroid31PermissionsGranted;
       }
