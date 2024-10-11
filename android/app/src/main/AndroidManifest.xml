@@ -24,8 +24,9 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="myapp"/>
-        <data android:scheme="com.sagarahir.pocbluetoothexpo"/>
+        <data android:scheme="poc-bluetooth"/>
+        <data android:scheme="com.sagarahir.pocbluetooth"/>
+        <data android:scheme="exp+poc-bluetooth"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>

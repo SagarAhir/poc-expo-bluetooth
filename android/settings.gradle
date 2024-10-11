@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'poc-bluetooth-expo'
+rootProject.name = 'poc-bluetooth'
 
 dependencyResolutionManagement {
   versionCatalogs {
