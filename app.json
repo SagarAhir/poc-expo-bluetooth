@@ -17,7 +17,18 @@
           "launchMode": "most-recent"
         }
       ],
-      "react-native-ble-plx"
+      "react-native-ble-plx",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": true
+          },
+          "ios": {
+            "newArchEnabled": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -33,7 +44,8 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sagarahir.pocbluetooth"
     },
     "android": {
       "package": "com.sagarahir.pocbluetooth",

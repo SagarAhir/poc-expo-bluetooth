@@ -1,0 +1,43 @@
+{
+  "name": "rtn-bluetooth",
+  "version": "0.0.1",
+  "description": "Configure Bluetooth with Turbo Native Modules",
+  "react-native": "js/index",
+  "source": "js/index",
+  "files": [
+    "js",
+    "android",
+    "ios",
+    "rtn-bluetooth.podspec",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "keywords": [
+    "react-native",
+    "ios",
+    "android"
+  ],
+  "repository": "https://github.com/SagarAhir/poc-expo-bluetooth",
+  "author": "Sagar Ahir <sagarahir@gmail.com> (https://github.com/SagarAhir)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SagarAhir/poc-expo-bluetooth/issues"
+  },
+  "homepage": "https://github.com/SagarAhir/poc-expo-bluetooth#readme",
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "RTNBluetoothSpec",
+    "type": "modules",
+    "jsSrcsDir": "js",
+    "android": {
+      "javaPackageName": "com.rtnbluetooth"
+    }
+  }
+}
