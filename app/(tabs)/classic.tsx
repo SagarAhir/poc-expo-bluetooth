@@ -69,6 +69,18 @@ const BluetoothClassic = () => {
 
       <TouchableOpacity
         style={[styles.button, isScanning && styles.buttonDisabled]}
+        onPress={() => router.navigate('/deviceListScreen')}
+        disabled={isScanning}>
+        {isScanning ? (
+          <ActivityIndicator color={Colors.white} />
+        ) : (
+          <Ionicons name="bluetooth" size={24} color={Colors.white} />
+        )}
+        <Text style={styles.buttonText}>{isScanning ? 'Scanning...' : 'Go To Devices'}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, isScanning && styles.buttonDisabled]}
         onPress={startScan}
         disabled={isScanning}>
         {isScanning ? (

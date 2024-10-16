@@ -14,6 +14,8 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="deviceDetails" options={{ headerShown: false }} />
+            <Stack.Screen name="deviceListScreen" options={{ headerShown: false }} />
+            <Stack.Screen name="connectionScreen" options={{ headerShown: false }} />
           </Stack>
         </View>
       </SafeAreaView>

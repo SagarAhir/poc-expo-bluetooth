@@ -112,9 +112,13 @@ const useBluetoothClassic = () => {
       setIsScanning(true);
       setDevices([]);
       const unpaired = await RNBluetoothClassic.startDiscovery();
-      const connected = await RNBluetoothClassic.getConnectedDevices();
-      console.log('startScan connected', connected, unpaired);
-      setConnectedDevice(connected[0]);
+      const index = devices.findIndex((d) => !d.bonded);
+      if (index >= 0) {
+        devices.splice(index, devices.length - index, ...unpaired);
+      } else {
+        devices.push(...unpaired);
+      }
+      console.log('startScan connected', unpaired, devices);
       setDevices((prevDevices) => [...prevDevices, ...unpaired]);
     } catch (error) {
       console.log('Error starting discovery: ', error);
@@ -124,30 +128,20 @@ const useBluetoothClassic = () => {
   };
 
   const connectToDevice = async (device: BluetoothDevice) => {
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY = 1000;
-
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        setConnecting(true);
-        const connected = await RNBluetoothClassic.connectToDevice(device.address);
-        const pairedDevice = await RNBluetoothClassic.pairDevice(device.address);
-        console.log('pairedDevice', pairedDevice, connected);
-        console.log(`Connected to device: ${device.name} (Attempt ${attempt})`);
-        if (connected) {
-          setConnectedDevice(device);
-          return true;
-        }
-      } catch (error) {
-        console.log(`Connection error (Attempt ${attempt}):`, error);
-        if (attempt === MAX_RETRIES) {
-          console.error('Max retries reached. Unable to connect to the device.');
-          return false;
-        }
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-      } finally {
-        setConnecting(false);
+    try {
+      setConnecting(true);
+      const connected = await RNBluetoothClassic.connectToDevice(device.address);
+      console.log('connected', connected);
+      const pairedDevice = await RNBluetoothClassic.pairDevice(device.address);
+      console.log('pairedDevice', pairedDevice);
+      if (connected) {
+        setConnectedDevice(device);
+        return true;
       }
+    } catch (error) {
+      console.log('Error connecting to device:', error);
+    } finally {
+      setConnecting(false);
     }
     return false;
   };
@@ -189,6 +183,30 @@ const useBluetoothClassic = () => {
     }
   }, [connectedDevice]);
 
+  const getBondedDevices = useCallback(() => {
+    RNBluetoothClassic.getBondedDevices().then((devices) => {
+      return devices;
+    });
+  }, []);
+
+  const acceptConnections = useCallback(async () => {
+    const device = await RNBluetoothClassic.accept({ delimiter: '\r' });
+    setConnectedDevice(device);
+    return device;
+  }, []);
+
+  const cancelAcceptConnections = useCallback(async () => {
+    const cancelled = await RNBluetoothClassic.cancelAccept();
+    console.log('cancelled', cancelled);
+  }, []);
+
+  const getDevice = useCallback(
+    (address: string) => {
+      return devices.find((d) => d.address === address);
+    },
+    [devices]
+  );
+
   useEffect(() => {
     if (connectedDevice) {
       listenForData();
@@ -201,10 +219,15 @@ const useBluetoothClassic = () => {
     isScanning,
     connecting,
     receivedData,
+    getBondedDevices,
+    requestPermissions,
     startScan,
     connectToDevice,
     disconnectFromDevice,
     sendData,
+    acceptConnections,
+    cancelAcceptConnections,
+    getDevice,
   };
 };
 
