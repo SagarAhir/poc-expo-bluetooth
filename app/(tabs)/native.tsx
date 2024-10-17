@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import RTNBluetooth from 'rtn-bluetooth/js/NativeBluetooth';
+import { isBluetoothEnabled } from 'react-native-bluetooth-plus';
+import RTNBluetooth from 'rtn-bluetooth/js/NativeRTNBluetooth';
 
 import Colors from '~/src/Utils/Colors';
 
@@ -28,6 +29,7 @@ const BluetoothNative = () => {
 
   const checkBluetoothStatus = async () => {
     try {
+      console.log('RTNBluetooth: ', RTNBluetooth);
       const enabled = await RTNBluetooth?.isBluetoothEnabled();
       setIsEnabled(!!enabled);
     } catch (error) {
@@ -88,6 +90,11 @@ const BluetoothNative = () => {
     </View>
   );
 
+  const handleMul = async () => {
+    const result = await isBluetoothEnabled();
+    console.log(result, 'result');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bluetooth Native</Text>
@@ -103,6 +110,12 @@ const BluetoothNative = () => {
         <Text style={styles.buttonText}>
           {!isEnabled ? 'Enable Bluetooth' : isScanning ? 'Scanning...' : 'Scan for Devices'}
         </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, (!isEnabled || isScanning) && styles.buttonDisabled]}
+        onPress={handleMul}>
+        <Ionicons name="bluetooth" size={24} color={Colors.white} />
+        <Text style={styles.buttonText}>multiply</Text>
       </TouchableOpacity>
 
       <FlatList

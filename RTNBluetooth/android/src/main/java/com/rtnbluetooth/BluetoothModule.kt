@@ -14,6 +14,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.rtnbluetooth.NativeRTNBluetoothSpec
 import java.io.IOException
 import java.util.*
+import android.util.Log
 
 class BluetoothModule(reactContext: ReactApplicationContext) : NativeRTNBluetoothSpec(reactContext) {
 
@@ -27,31 +28,51 @@ class BluetoothModule(reactContext: ReactApplicationContext) : NativeRTNBluetoot
     override fun getName() = NAME
 
     override fun isBluetoothEnabled(promise: Promise) {
-        promise.resolve(bluetoothAdapter?.isEnabled == true)
+        Log.d(TAG, "Checking if Bluetooth is enabled")
+        val isEnabled = bluetoothAdapter?.isEnabled == true
+        Log.d(TAG, "Bluetooth enabled: $isEnabled")
+        promise.resolve(isEnabled)
     }
 
     override fun enableBluetooth(promise: Promise) {
+        Log.d(TAG, "Attempting to enable Bluetooth")
+        if (bluetoothAdapter == null) {
+            Log.e(TAG, "Device doesn't support Bluetooth")
+            promise.reject("BLUETOOTH_NOT_SUPPORTED", "Device doesn't support Bluetooth")
+            return
+        }
+
         if (bluetoothAdapter?.isEnabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            currentActivity?.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-            promise.resolve(true)
+            try {
+                currentActivity?.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                Log.d(TAG, "Bluetooth enable request sent")
+                promise.resolve(true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to send Bluetooth enable request", e)
+                promise.reject("ENABLE_BLUETOOTH_FAILED", "Failed to send Bluetooth enable request: ${e.message}")
+            }
         } else {
+            Log.d(TAG, "Bluetooth is already enabled")
             promise.resolve(false)
         }
     }
 
     override fun startScanning(promise: Promise) {
+        Log.d(TAG, "Starting Bluetooth scan")
         if (!checkBluetoothPermissions()) {
+            Log.e(TAG, "Bluetooth permissions not granted")
             promise.reject("PERMISSION_DENIED", "Bluetooth permissions not granted")
             return
         }
 
         if (bluetoothAdapter?.isEnabled == true) {
             isScanning = true
-            // Start discovery process
             bluetoothAdapter?.startDiscovery()
+            Log.d(TAG, "Bluetooth discovery started")
             promise.resolve(true)
         } else {
+            Log.e(TAG, "Bluetooth is not enabled")
             promise.reject("BLUETOOTH_DISABLED", "Bluetooth is not enabled")
         }
     }
@@ -135,22 +156,30 @@ class BluetoothModule(reactContext: ReactApplicationContext) : NativeRTNBluetoot
     }
 
     private fun checkBluetoothPermissions(): Boolean {
-        return ContextCompat.checkSelfPermission(
+        Log.d(TAG, "Checking Bluetooth permissions")
+        val hasBluetoothPermission = ContextCompat.checkSelfPermission(
             reactApplicationContext,
             android.Manifest.permission.BLUETOOTH
-        ) == PackageManager.PERMISSION_GRANTED &&
-        ContextCompat.checkSelfPermission(
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasBluetoothAdminPermission = ContextCompat.checkSelfPermission(
             reactApplicationContext,
             android.Manifest.permission.BLUETOOTH_ADMIN
-        ) == PackageManager.PERMISSION_GRANTED &&
-        ContextCompat.checkSelfPermission(
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasLocationPermission = ContextCompat.checkSelfPermission(
             reactApplicationContext,
             android.Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+
+        Log.d(TAG, "Bluetooth permission: $hasBluetoothPermission")
+        Log.d(TAG, "Bluetooth Admin permission: $hasBluetoothAdminPermission")
+        Log.d(TAG, "Location permission: $hasLocationPermission")
+
+        return hasBluetoothPermission && hasBluetoothAdminPermission && hasLocationPermission
     }
 
     companion object {
         const val NAME = "RTNBluetooth"
         private const val REQUEST_ENABLE_BT = 1
+        private const val TAG = "BluetoothModule"
     }
 }
