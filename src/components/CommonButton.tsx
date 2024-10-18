@@ -21,7 +21,9 @@ const CommonButton = ({
   onPress,
 }: CommonButtonProps) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[style, bgColor && { backgroundColor: bgColor }]}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.ctaButton, style, bgColor && { backgroundColor: bgColor }]}>
       {loading ? <ActivityIndicator color={Colors.white} /> : iconComponent ? iconComponent : null}
       <Text style={styles.ctaButtonText}>{label ?? '-'}</Text>
     </TouchableOpacity>

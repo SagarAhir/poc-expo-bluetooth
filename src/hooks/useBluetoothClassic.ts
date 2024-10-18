@@ -124,30 +124,20 @@ const useBluetoothClassic = () => {
   };
 
   const connectToDevice = async (device: BluetoothDevice) => {
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY = 1000;
-
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        setConnecting(true);
-        const connected = await RNBluetoothClassic.connectToDevice(device.address);
-        const pairedDevice = await RNBluetoothClassic.pairDevice(device.address);
-        console.log('pairedDevice', pairedDevice, connected);
-        console.log(`Connected to device: ${device.name} (Attempt ${attempt})`);
-        if (connected) {
-          setConnectedDevice(device);
-          return true;
-        }
-      } catch (error) {
-        console.log(`Connection error (Attempt ${attempt}):`, error);
-        if (attempt === MAX_RETRIES) {
-          console.error('Max retries reached. Unable to connect to the device.');
-          return false;
-        }
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-      } finally {
-        setConnecting(false);
+    try {
+      setConnecting(true);
+      const connected = await RNBluetoothClassic.connectToDevice(device.address);
+      const pairedDevice = await RNBluetoothClassic.pairDevice(device.address);
+      console.log('pairedDevice', pairedDevice, connected);
+      console.log(`Connected to device: ${device.name}`);
+      if (connected) {
+        setConnectedDevice(device);
+        return true;
       }
+    } catch (error) {
+      console.log(`Connection error: `, error);
+    } finally {
+      setConnecting(false);
     }
     return false;
   };

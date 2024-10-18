@@ -1,14 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as ExpoDevice from 'expo-device';
 import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, FlatList, Platform, PermissionsAndroid } from 'react-native';
 import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
-import RTNBluetooth from 'rtn-bluetooth/js/NativeRTNBluetooth';
+  connectToDevice,
+  disconnectFromDevice,
+  enableBluetooth,
+  isBluetoothEnabled,
+  receiveData,
+  sendData,
+  startScanning,
+  stopScanning,
+} from 'react-native-bluetooth-plus';
 
 import Colors from '~/src/Utils/Colors';
 import CommonButton from '~/src/components/CommonButton';
@@ -23,23 +26,80 @@ const BluetoothPlus = () => {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
 
-  useEffect(() => {
-    checkBluetoothStatus();
-  }, []);
+  const requestAndroid31Permissions = async () => {
+    const bluetoothScanPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      {
+        title: 'Location Permission',
+        message: 'Bluetooth Low Energy requires Location',
+        buttonPositive: 'OK',
+      }
+    );
+    console.log('bluetoothScanPermission', bluetoothScanPermission);
+    const bluetoothConnectPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+      {
+        title: 'Location Permission',
+        message: 'Bluetooth Low Energy requires Location',
+        buttonPositive: 'OK',
+      }
+    );
+    console.log('bluetoothConnectPermission', bluetoothConnectPermission);
+    const fineLocationPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Location Permission',
+        message: 'Bluetooth Low Energy requires Location',
+        buttonPositive: 'OK',
+      }
+    );
+    console.log('fineLocationPermission', fineLocationPermission);
+    return (
+      bluetoothScanPermission === 'granted' &&
+      bluetoothConnectPermission === 'granted' &&
+      fineLocationPermission === 'granted'
+    );
+  };
+
+  const requestPermissions = async () => {
+    if (Platform.OS === 'android') {
+      if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'Bluetooth Low Energy requires Location',
+            buttonPositive: 'OK',
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } else {
+        const isAndroid31PermissionsGranted = await requestAndroid31Permissions();
+        await checkBluetoothStatus();
+        console.log('isAndroid31PermissionsGranted', isAndroid31PermissionsGranted);
+        return isAndroid31PermissionsGranted;
+      }
+    } else {
+      return true;
+    }
+  };
 
   const checkBluetoothStatus = async () => {
     try {
-      const enabled = await RTNBluetooth?.isBluetoothEnabled();
+      const enabled = await isBluetoothEnabled();
       setIsEnabled(!!enabled);
     } catch (error) {
       console.error('Error checking Bluetooth status:', error);
     }
   };
 
-  const enableBluetooth = useCallback(async () => {
+  const handleEnableBluetooth = useCallback(async () => {
     try {
-      const enabled = await RTNBluetooth?.enableBluetooth();
-      setIsEnabled(!!enabled);
+      const isEnabled = await requestPermissions();
+      if (isEnabled) {
+        await enableBluetooth();
+        await checkBluetoothStatus();
+      } else throw Error('Permissions are not enabled');
     } catch (error) {
       console.error('Error enabling Bluetooth:', error);
     }
@@ -55,7 +115,9 @@ const BluetoothPlus = () => {
     setDevices([]);
 
     try {
-      await RTNBluetooth?.startScanning();
+      const result = await startScanning();
+      console.log('result: ', result);
+      setDevices(result);
       // Placeholder for receiving device data
       // You might need to implement a callback mechanism in your native module
 
@@ -71,7 +133,7 @@ const BluetoothPlus = () => {
 
   const stopScan = useCallback(async () => {
     try {
-      await RTNBluetooth?.stopScanning();
+      await stopScanning();
       setIsScanning(false);
     } catch (error) {
       console.error('Error stopping scan:', error);
@@ -94,7 +156,7 @@ const BluetoothPlus = () => {
       <CommonButton
         label={!isEnabled ? 'Enable Bluetooth' : isScanning ? 'Scanning...' : 'Scan for Devices'}
         iconComponent={<Ionicons name="bluetooth" size={24} color={Colors.white} />}
-        onPress={isEnabled ? startScan : enableBluetooth}
+        onPress={isEnabled ? startScan : handleEnableBluetooth}
       />
 
       <FlatList
