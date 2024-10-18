@@ -12,7 +12,9 @@
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "eas-android-dev": "expo eas build --platform android --profile development",
+    "eas-android-preview": "expo eas build --platform android --profile preview"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",

@@ -42,10 +42,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sagarahir.pocbluetooth"
+      "bundleIdentifier": "com.sagarahir.pocbluetooth",
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "package": "com.sagarahir.pocbluetooth",
@@ -62,12 +67,16 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION"
       ],
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "runtimeVersion": "1.0.0"
     },
     "extra": {
       "eas": {
         "projectId": "e7226e33-cf34-43db-adac-415104ec890f"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e7226e33-cf34-43db-adac-415104ec890f"
     }
   }
 }

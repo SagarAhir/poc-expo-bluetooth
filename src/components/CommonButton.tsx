@@ -1,26 +1,29 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { Colors } from "../Utils/Colors";
+import React from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { Colors } from '../Utils/Colors';
 
 interface CommonButtonProps {
   label: string | null;
   style?: any;
-  BgColor?: string;
+  bgColor?: string;
+  loading?: boolean;
+  iconComponent: React.ReactNode;
   onPress: () => void;
 }
 
 const CommonButton = ({
   label,
   style,
-  BgColor,
+  bgColor,
+  iconComponent,
+  loading,
   onPress,
 }: CommonButtonProps) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[style, BgColor && { backgroundColor: BgColor }]}
-    >
-      <Text style={styles.ctaButtonText}>{label ?? "-"}</Text>
+    <TouchableOpacity onPress={onPress} style={[style, bgColor && { backgroundColor: bgColor }]}>
+      {loading ? <ActivityIndicator color={Colors.white} /> : iconComponent ? iconComponent : null}
+      <Text style={styles.ctaButtonText}>{label ?? '-'}</Text>
     </TouchableOpacity>
   );
 };
@@ -30,14 +33,15 @@ export default CommonButton;
 const styles = StyleSheet.create({
   ctaButton: {
     backgroundColor: Colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    height: 50,
-    marginHorizontal: 20,
-    marginBottom: 5,
-    borderRadius: 8,
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
   },
   ctaButtonText: {
-    color: "white",
+    color: 'white',
   },
 });

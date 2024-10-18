@@ -23,10 +23,6 @@ const BluetoothPlus = BluetoothPlusModule
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return BluetoothPlus.multiply(a, b);
-}
-
 export function isBluetoothEnabled(): Promise<boolean> {
   return BluetoothPlus.isBluetoothEnabled();
 }
