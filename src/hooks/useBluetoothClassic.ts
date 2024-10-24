@@ -4,14 +4,22 @@ import { Platform, PermissionsAndroid } from 'react-native';
 import RNBluetoothClassic, { BluetoothDevice } from 'react-native-bluetooth-classic';
 
 const useBluetoothClassic = () => {
+  let readTimer: NodeJS.Timeout;
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<BluetoothDevice | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [isAccepting, setIsAccepting] = useState<boolean>(false);
   const [connecting, setConnecting] = useState(false);
   const [receivedData, setReceivedData] = useState<string>('');
 
   useEffect(() => {
     requestPermissions();
+
+    return () => {
+      if (readTimer) {
+        clearTimeout(readTimer);
+      }
+    };
   }, []);
 
   const requestAndroid31Permissions = async () => {
@@ -60,6 +68,8 @@ const useBluetoothClassic = () => {
             buttonPositive: 'OK',
           }
         );
+        console.log('low android permission: ', granted);
+        await initializeBluetooth();
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } else {
         const isAndroid31PermissionsGranted = await requestAndroid31Permissions();
@@ -102,6 +112,7 @@ const useBluetoothClassic = () => {
       setDevices(paired);
       const connected = await RNBluetoothClassic.getConnectedDevices();
       setConnectedDevice(connected[0]);
+      await acceptConnections();
     } catch (error) {
       console.log('Error initializing Bluetooth:', error);
     }
@@ -113,7 +124,6 @@ const useBluetoothClassic = () => {
       setDevices([]);
       const unpaired = await RNBluetoothClassic.startDiscovery();
       const connected = await RNBluetoothClassic.getConnectedDevices();
-      console.log('startScan connected', connected, unpaired);
       setConnectedDevice(connected[0]);
       setDevices((prevDevices) => [...prevDevices, ...unpaired]);
     } catch (error) {
@@ -127,8 +137,9 @@ const useBluetoothClassic = () => {
     try {
       setConnecting(true);
       const connected = await RNBluetoothClassic.connectToDevice(device.address);
-      const pairedDevice = await RNBluetoothClassic.pairDevice(device.address);
-      console.log('pairedDevice', pairedDevice, connected);
+      console.log('connectToDevice: ', connected);
+      // const pairedDevice = await RNBluetoothClassic.pairDevice(device.address);
+      // console.log('pairedDevice', pairedDevice);
       console.log(`Connected to device: ${device.name}`);
       if (connected) {
         setConnectedDevice(device);
@@ -145,7 +156,6 @@ const useBluetoothClassic = () => {
   const disconnectFromDevice = async () => {
     if (connectedDevice) {
       try {
-        await RNBluetoothClassic.unpairDevice(connectedDevice.address);
         await RNBluetoothClassic.disconnectFromDevice(connectedDevice.address);
         setConnectedDevice(null);
         console.log('Disconnected from device:', connectedDevice);
@@ -159,13 +169,16 @@ const useBluetoothClassic = () => {
     async (data: string) => {
       if (connectedDevice) {
         try {
-          await connectedDevice.write(data);
+          const result = await connectedDevice.write(data);
           console.log('Data sent successfully');
+          return result;
         } catch (error) {
           console.error('Error sending data:', error);
+          return false;
         }
       } else {
         console.warn('No device connected');
+        return false;
       }
     },
     [connectedDevice]
@@ -173,17 +186,52 @@ const useBluetoothClassic = () => {
 
   const listenForData = useCallback(() => {
     if (connectedDevice) {
+      console.log('listening......');
       connectedDevice.onDataReceived((data) => {
-        setReceivedData((prevData) => prevData + data);
+        console.log('Data: recived', data);
+        setReceivedData(data.data);
       });
     }
   }, [connectedDevice]);
 
+  const acceptConnections = useCallback(async () => {
+    try {
+      setIsAccepting(true);
+      const device = await RNBluetoothClassic.accept({});
+      console.log('Devices accept: ', device);
+    } catch (error) {
+      console.log('accept error', error);
+    } finally {
+      setIsAccepting(false);
+    }
+  }, []);
+
+  const cancelAcceptConnections = async () => {
+    try {
+      const device = await RNBluetoothClassic.cancelAccept();
+      setIsAccepting(false);
+      console.log('Devices cancel accept: ', device);
+    } catch (error) {
+      console.log('accept error', error);
+    }
+  };
+
   useEffect(() => {
     if (connectedDevice) {
+      console.log('Start listening....');
       listenForData();
     }
   }, [connectedDevice, listenForData]);
+
+  const getConnectedDevices = async () => {
+    try {
+      const result = await RNBluetoothClassic.getConnectedDevices();
+      setConnectedDevice(result[0]);
+      console.log('result: connected devices', result);
+    } catch (error) {
+      console.error('Error getting connected devices:', error);
+    }
+  };
 
   return {
     devices,
@@ -191,10 +239,14 @@ const useBluetoothClassic = () => {
     isScanning,
     connecting,
     receivedData,
+    isAccepting,
     startScan,
     connectToDevice,
     disconnectFromDevice,
     sendData,
+    acceptConnections,
+    cancelAcceptConnections,
+    getConnectedDevices,
   };
 };
 

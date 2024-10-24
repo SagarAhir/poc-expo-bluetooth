@@ -10,7 +10,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
         <View style={{ flex: 1, backgroundColor: Colors.background }}>
-          <StatusBar style="light" />
+          <StatusBar style="inverted" />
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="deviceDetails" options={{ headerShown: false }} />

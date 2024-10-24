@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import { Colors } from '../Utils/Colors';
 
@@ -8,7 +8,7 @@ interface CommonButtonProps {
   style?: any;
   bgColor?: string;
   loading?: boolean;
-  iconComponent: React.ReactNode;
+  iconComponent?: React.ReactNode;
   onPress: () => void;
 }
 

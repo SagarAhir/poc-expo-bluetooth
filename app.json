@@ -9,27 +9,6 @@
       "output": "static",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-dev-launcher",
-        {
-          "launchMode": "most-recent"
-        }
-      ],
-      "react-native-ble-plx",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "newArchEnabled": true
-          },
-          "ios": {
-            "newArchEnabled": true
-          }
-        }
-      ]
-    ],
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
@@ -42,9 +21,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sagarahir.pocbluetooth",
@@ -77,6 +54,27 @@
     },
     "updates": {
       "url": "https://u.expo.dev/e7226e33-cf34-43db-adac-415104ec890f"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-dev-launcher",
+        {
+          "launchMode": "most-recent"
+        }
+      ],
+      "react-native-ble-plx",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": true
+          },
+          "ios": {
+            "newArchEnabled": true
+          }
+        }
+      ]
+    ]
   }
 }
